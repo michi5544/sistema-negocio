@@ -1,0 +1,35 @@
+# Ignorar node_modules (dependencias)
+node_modules/
+
+# Ignorar archivo .env (variables de entorno)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignorar logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignorar archivos temporales de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar compilaciones o builds
+dist/
+build/
+
+# Coverage (tests)
+coverage/
+
+# Archivos de cache
+.cache/
+.tmp/
+
+# Configuración de editores
+.vscode/
+.idea/
+
