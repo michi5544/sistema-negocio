@@ -1,16 +1,62 @@
 # React + Vite
+#  Sistema de Ventas - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es el frontend del **Sistema de Ventas**, desarrollado con **React + Vite** y estilizado con **TailwindCSS**.  
+El objetivo es ofrecer una interfaz moderna y responsiva para la gestión de clientes, productos, ventas y reportes.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##  Tecnologías utilizadas
 
-## React Compiler
+- [React](https://reactjs.org/) – Librería para construir interfaces de usuario.
+- [Vite](https://vitejs.dev/) – Herramienta de desarrollo rápida para React.
+- [TailwindCSS](https://tailwindcss.com/) – Framework de estilos utilitario.
+- [React Router](https://reactrouter.com/) – Manejo de rutas en SPA.
+- [React Toastify](https://fkhadra.github.io/react-toastify/) – Notificaciones elegantes.
+- [Heroicons](https://heroicons.com/) – Íconos SVG para React.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+##  Instalación y configuración
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/usuario/sistema-ventas-frontend.git
+   cd sistema-ventas-frontend
+
+2. Instala dependencias:
+   ```bash
+   npm install
+
+3. Configura las variables de entorno:
+Copia el archivo .env.example y renómbralo a .env.
+Ajusta la URL de la API según tu entorno: VITE_API_URL=http://localhost:3000/api
+
+*** DESARROLLO
+    npm run dev -correr el proyecto
+
+*** BUILD PRODUCCION
+    npm run build
+
+----- ESTRUCTURA DEL PROYECTO ------
+
+src/
+ ├── api/              # Funciones para consumir la API
+ ├── components/       # Componentes reutilizables (Navbar, Layout, etc.)
+ ├── pages/            # Páginas principales (Clientes, Productos, Ventas, Reportes)
+ ├── App.jsx           # Componente raíz
+ ├── AppRouter.jsx     # Configuración de rutas
+ └── main.jsx          # Punto de entrada
+
+
+----- Funcionalidades- Dashboard inicial con accesos rápidos. -------
+- Gestión de clientes: listado, creación y edición.
+- Gestión de productos: inventario y registro de nuevos productos.
+- Gestión de ventas: registro de transacciones.
+- Reportes: visualización de estadísticas y reportes.
+
+
+ ## Autora
+Desarrollado por Michelle
+Universidad Tecnológica de El Salvador · ITCA-FEPADE
+Especialista en Fullstack Development (React, Node.js, SQL, TailwindCSS)

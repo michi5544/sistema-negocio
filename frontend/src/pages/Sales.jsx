@@ -74,12 +74,12 @@ function Sales(){
             <tr className="bg-[#005187] text-white">
                 <th className="py-2 px-4 text-left">VentaId</th>
                 <th className="py-2 px-4 text-left">Fecha venta</th>
-                <th className="py-2 px-4 text-left">Total</th>
+                <th className="py-2 px-4 text-left">Total Venta</th>
                 <th className="py-2 px-4 text-left">Cliente</th>
                 <th className="py-2 px-4 text-left">Product_id</th>
                 <th className="py-2 px-4 text-left">Producto</th>
                 <th className="py-2 px-4 text-left">Cantidad</th>
-                <th className="py-2 px-4 text-left">Precio</th>
+                <th className="py-2 px-4 text-left">Precio Unidad</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold">Acciones</th>
             </tr>
             </thead>
@@ -100,6 +100,9 @@ function Sales(){
                                 </button>
                                 <button className="px-7 py-3 ml-3 text-sm font-semibold text-white bg-red-600 rounded hover:bg-red-700 transition">
                                     Eliminar
+                                </button>
+                                <button className="px-7 py-3 ml-3 text-sm font-semibold text-white bg-yellow-400 rounded hover:bg-yellow-500 transition">
+                                    Generar factura
                                 </button>
 
                             </td>
