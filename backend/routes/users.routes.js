@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
             name, 
             email,
             password: hashedPassword // se guarda el hash
-            //,role: role || 'Customer'
+            ,role: role || 'Customer'
         });
 
         res.json(users);
