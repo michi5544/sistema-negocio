@@ -12,13 +12,15 @@ function Products(){
     const [editingProduct, setEditingProduct] = useState(null);
     const [successsMessage, setsuccesssMessage] = useState("");
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const handleEdit = (id) => {
         navigate(`/productos/editar/${id}`); //redirige al formulario con el id
     }
 
     // Cargar productos al inicio
     useEffect(() => {
-        fetch("http://localhost:3000/api/products")
+        fetch(`${API_URL}/products`)
         .then(res => res.json())
         .then(data => {
             console.log("productos", data);

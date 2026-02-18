@@ -7,6 +7,7 @@ import FrmNuevoCliente from "./FrmNuevoCliente.jsx";
 import NuevoCliente from "./FrmNuevoCliente.jsx";
 
 function Clients(){
+    const API_URL = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
     const [name, setName] = useState("");
@@ -19,7 +20,7 @@ function Clients(){
 
     //Cargar clientes al inicio
     useEffect(() => {
-        fetch("http://localhost:3000/api/customers")
+        fetch(`${API_URL}/customers`)
         .then(res => res.json())
         .then(data => {
             console.log("clientes", data);

@@ -5,14 +5,16 @@ function Reports(){
   const [clientes, setClientes] = useState([]);
   const [productos, setProductos] = useState([]);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
-    fetch("http://localhost:3000/api/reportes/ventas")
+    fetch(`${API_URL}/reportes/ventas`)
       .then(res => res.json())
       .then(data => setVentas(data));
-    fetch("http://localhost:3000/api/reportes/clientes")
+    fetch(`${API_URL}/reportes/clientes`)
       .then(res => res.json())
       .then(data => setClientes(data));
-    fetch("http://localhost:3000/api/reportes/productos")
+    fetch(`${API_URL}/reportes/productos`)
       .then(res => res.json())
       .then(data => setProductos(data));
   }, []);

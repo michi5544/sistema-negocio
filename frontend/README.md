@@ -30,7 +30,7 @@ El objetivo es ofrecer una interfaz moderna y responsiva para la gestión de cli
 
 3. Configura las variables de entorno:
 Copia el archivo .env.example y renómbralo a .env.
-Ajusta la URL de la API según tu entorno: VITE_API_URL=http://localhost:3000/api
+Ajusta la URL de la API según tu entorno: VITE_API_URL=http://mihost:miruta/api
 
 *** DESARROLLO
     npm run dev -correr el proyecto
