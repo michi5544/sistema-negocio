@@ -13,9 +13,11 @@ function Sales(){
     const [ details, setDetails ] = useState([]);
     const [data, setData] = useState([]);
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
         // CARGAR STORED PROCEDURE
         useEffect(()  => { // hace peticion al backend
-            fetch("http://localhost:3000/api/sales/sp")
+            fetch(`${API_URL}/sales/sp`)
             .then((res) => res.json())
             .then((result) => setData(result)) //guarda la respuesta
             .catch((err) => console.error(err));

@@ -11,7 +11,9 @@ function NuevaVenta() {
     const [cantidad, setCantidad] = useState(1);
     //const [fecha, setFecha] = useState("");
     const [items, setItems] = useState([]); // lista de productos en la venta
-  const [showConfirm, setShowConfirm] = useState(false); // estado para mostrar confirmación
+    const [showConfirm, setShowConfirm] = useState(false); // estado para mostrar confirmación
+
+    const API_URL = import.meta.env.VITE_API_URL; // URL base del backend desde variables de entorno
 
         // Función para obtener la fecha actual en formato YYYY-MM-DD
     const getToday = () => {
@@ -25,12 +27,12 @@ function NuevaVenta() {
 
     //  Cargar clientes y productos al montar el componente
     useEffect(() => {
-        fetch("http://localhost:3000/api/customers")
+        fetch(`${API_URL}/customers`)
         .then(res => res.json())
         .then(data => {setClientes(data);})
         .catch(err => console.error(err));
 
-        fetch("http://localhost:3000/api/products")
+        fetch(`${API_URL}/products`)
         .then(res => res.json())
         .then(data => {setProductos(data);})
         .catch(err => console.error(err));
@@ -69,7 +71,7 @@ function NuevaVenta() {
         };
 
         try {
-            const response = await fetch("http://localhost:3000/api/sales", {
+            const response = await fetch(`${API_URL}/sales`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
