@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "serve -s dist",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -14,7 +15,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "serve": "^14.2.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
