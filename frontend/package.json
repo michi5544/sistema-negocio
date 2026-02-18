@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "serve -s dist -n -L $PORT"
+    "start": "serve -s dist -L $PORT"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
