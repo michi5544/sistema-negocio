@@ -1,12 +1,12 @@
-//CONTROLADOR LOGIN
+//CONTROLADOR LOGIN (paso 1 para generar el token JWT )
 const User =  require('../models/users.model.js');
-const bcrypt = require('bcryptjs'); //- Guarda la contraseña encriptada con bcrypt
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs'); //- Guarda la contraseña encriptada con bcrypt / tipo de token JWT para autenticacion y autorizacion de usuarios
+const jwt = require('jsonwebtoken'); // algoritmo de encriptacion para generar el token
 require('dotenv').config();
 
 exports.login = async (req, res) => {
     try{
-        const { email, password } = req.body;
+        const { email, password } = req.body; //payload de la solicitud contiene los claims 
 
         const user = await User.findOne({ where: {email }});
         if(!user){

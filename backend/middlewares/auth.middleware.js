@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken'); // algoritmo de encriptacion para verificar el token payload 
 require('dotenv').config();
 
 function authenticateToken(req, res, next){

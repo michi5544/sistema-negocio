@@ -14,7 +14,7 @@ const Product = sequelize.define('Product', {
   stock: { type: DataTypes.INTEGER, defaultValue: 0 }
 }, {
   tableName: 'products',
-  timestamps: false   // 👈 evita que Sequelize use createdAt/updatedAt
+  timestamps: false   // evita que Sequelize use createdAt/updatedAt
 });
 
 module.exports = Product;

@@ -33,6 +33,8 @@ function AppRouter() {
             <Route path="/productos/editar/:id" element={<NuevoProducto />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/ventas/nueva" element={<NuevaVenta />} />
+            <Route path="/ventas/editar/:id" element={<NuevaVenta />} />
+            <Route path="/ventas/factura/:id" element={<NuevaVenta />} />
             <Route path="/reports" element={<Reports />} />
           </Routes>
         </div>

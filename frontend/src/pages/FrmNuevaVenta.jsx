@@ -1,29 +1,41 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, use } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { getSaleById, updateSale, addSale } from "../services/api";
+import FactureModal from "../components/Facture";
 
 function NuevaVenta() {
+    const { id } = useParams(); // para obtener el ID de la venta a editar (si existe)
     const [clientes, setClientes] = useState([]);
     const [clienteId, setClienteId] = useState("");
     const [productoId, setProductoId] = useState("");
     const [productos, setProductos] = useState([]);
     const [cantidad, setCantidad] = useState(1);
-    //const [fecha, setFecha] = useState("");
+    const [saleId, setSaleId] = useState(null); // para guardar el ID de la venta creada
+   // const [sale, setSale] = useState(null);
     const [items, setItems] = useState([]); // lista de productos en la venta
     const [showConfirm, setShowConfirm] = useState(false); // estado para mostrar confirmación
-
+    const [showModal, setShowModal] = useState(false); // estado para mostrar modal de factura
+    const [saleGuardada, setSaleGuardada] = useState(null);
+    const [showFactura, setShowFactura] = useState(false);
     const API_URL = import.meta.env.VITE_API_URL; // URL base del backend desde variables de entorno
-
-        // Función para obtener la fecha actual en formato YYYY-MM-DD
-    const getToday = () => {
-        const today = new Date();
-        return today.toISOString().split("T")[0]; // formato YYYY-MM-DD
-    };
-
-    const [fecha, setFecha] = useState(getToday()); // inicializa con la fecha actual
-
     const navigate = useNavigate();
+        const [selectedSale, setSelectedSale] = useState(null);
+    // Función para obtener la fecha actual en formato YYYY-MM-DD
+    const getToday = () => new Date().toISOString().split("T")[0];// formato YYYY-MM-DD
+    const [fecha, setFecha] = useState(getToday()); // inicializa con la fecha actual
+    const [sale, setSale] = useState({
+      customer_id: "",
+      user_id: 1,
+      total: "",
+      fecha: getToday(),
+      SaleDetails: [] // lista de productos en la venta
+    });
+useEffect(() => {
+  console.log("Venta cargada:", sale);
+}, [sale]);
+
+
 
     //  Cargar clientes y productos al montar el componente
     useEffect(() => {
@@ -38,6 +50,24 @@ function NuevaVenta() {
         .catch(err => console.error(err));
     }, []);
 
+      useEffect(() => { // si hay ID, cargar datos de la venta para edición
+        if (id) {
+          getSaleById(id).then(data => {
+            setSale(data); // guardas toda la venta
+            setClienteId(data.customer_id); // precargas cliente
+            setItems(data.SaleDetails.map(detail => ({
+              productId: detail.product_id,
+              quantity: detail.quantity
+            }))); // precargas productos
+            setFecha(data.sale_date); // si tu backend devuelve fecha
+          });
+        }
+      }, [id]);
+
+ 
+
+        // obtener venta por ID (para mostrar detalles después de registrar)
+
     const handleAddItem = () => {
 
         if (!productoId || cantidad <= 0) return;
@@ -51,8 +81,9 @@ function NuevaVenta() {
     const handleRemoveItem = (index) => {
         const newItems = [...items];
         newItems.splice(index, 1);
-        setItems(newItems);
+        setItems(newItems); 
     };
+
 
 
     const handleSubmit = async (e) => {
@@ -69,68 +100,88 @@ function NuevaVenta() {
             user_id: 1, // ID del usuario que registra la venta (puede ser dinámico si hay autenticación)
             products: items,
         };
+  if (id) {
+    // modo edición
+    try {
+      const data = await updateSale({ ...sale, id });
+      toast.success("Venta actualizada exitosamente ✅");
+      navigate("/sales");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al actualizar la venta");
+    }
+  } else {
+    // modo creación
+    try {
+      const data = await addSale(sale);
+      setSaleId(data.sale.id);
+      setSaleGuardada(data.sale);
+      toast.success("Venta registrada exitosamente ✅");
+      setShowConfirm(true);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al registrar la venta");
+    }
+  }
 
-        try {
-            const response = await fetch(`${API_URL}/sales`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(sale),
-            });
-
-            if (!response.ok) throw new Error("Error al registrar la venta");
-
-            toast.success("Venta registrada exitosamente");
-            setShowConfirm(true); // mostrar confirmación en lugar de navegar directo
-
-        } catch (error) {
-            console.error(error);
-            toast.error("Error al registrar la venta");
-        }
+       
     };
 
+    // Mostrar el modal de factura
+    const handleShowInvoice = async (id) =>{
+          try {
+        const data = await getSaleById(id);
+        setSelectedSale(data);
+        setShowModal(true);
+    } catch (error) {
+        console.error(error);
+        toast.error("Error al obtener los detalles de la venta");
+    }
+    };
+
+
+
+
     return( 
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-            <div className="bg-white shadow rounded p-6 w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-4 text-purple-600">Registrar venta</h2>
-                {!showConfirm ? (
-                <form onSubmit={handleSubmit} className="space-y-4">
-           {/* Select de clientes */}
-                    <div>
-                    <label className="block text-gray-700">Cliente</label>
-                <select
-                    value={clienteId}
-                    onChange={(e) => setClienteId(e.target.value)}
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-purple-300"
-                    required
-                    >
+  <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+    <div className="bg-white shadow rounded p-6 w-full max-w-md">
+      <h2 className="text-2xl font-bold mb-4 text-purple-600">Registrar venta</h2>
 
-                    <option value="">Seleccione un cliente</option>
-                    {clientes.map(c => (
-                        <option key={c.id} value={c.id}>{c.name}</option> //lista los datos de la DB tbl customers
-                    ))}
-                     </select>
-                    </div>
-         {/*Fecha */}
-                    <div>
-                        <label className="block text-gray-700">Fecha Venta</label>
-                        <input
-                        type="date"
-                        value={fecha}
-                        onChange={(e) => setFecha(e.target.value)}
-                        readOnly // la fecha se establece automáticamente, no se puede editar
-                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-purple-300"
-                        />
-                    </div>
+      {!showConfirm ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Select de clientes */}
+          <div>
+            <label className="block text-gray-700">Cliente</label>
+            <select
+              value={clienteId}
+              onChange={(e) => setClienteId(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+              required
+            >
+              <option value="">Seleccione un cliente</option>
+              {clientes.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
 
-          {/* Agregar producto */}
+                    {/* Fecha */}
+          <div>
+            <label className="block text-gray-700">Fecha Venta</label>
+            <input
+              type="date"
+              value={fecha}
+              readOnly
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+
+{/* Agregar producto */}
           <div className="flex gap-2 items-center">
             <select
               value={productoId}
               onChange={(e) => setProductoId(e.target.value)}
               className="border rounded px-3 py-2 flex-1"
-              required
             >
               <option value="">Seleccione un producto</option>
               {productos.map(p => (
@@ -153,7 +204,7 @@ function NuevaVenta() {
             </button>
           </div>
 
-          {/* Tabla de ítems */}
+{/* Tabla de ítems */}
           <table className="w-full border-collapse border border-gray-300 mt-4">
             <thead>
               <tr className="bg-gray-100">
@@ -183,39 +234,49 @@ function NuevaVenta() {
               })}
             </tbody>
           </table>
+{/* Guardar */}
+          <button
+            type="submit"
+            className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+          >
+            Guardar Venta
+          </button>
+        </form>
+      ) : (
+        <div className="space-y-4 text-center">
+          <p className="text-lg font-bold text-gray-700">¿Desea generar factura?</p>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => handleShowInvoice(saleGuardada.id)}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Sí
+            </button>
 
-                    {/* Guardar */}
-                    <button
-                        type="submit"
-                        className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                    >
-                        Guardar Venta
-                    </button>
+            <FactureModal 
+  sale={saleGuardada} 
+  show={showModal} 
+  onClose={() => setShowModal(false)} 
+/>
 
-                </form>
-        ) : (
-          <div className="space-y-4 text-center">
-            <p className="text-lg font-bold text-gray-700">¿Desea generar factura?</p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={() => navigate("/sales")}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-              >
-                Sí
-              </button>
-              <button
-                onClick={() => navigate("/sales")}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              >
-                No
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/sales")}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              No
+            </button>
           </div>
-        )}
-
-            </div>
         </div>
+      )}
+
+      
+    </div>
+  </div>
+
+
     );
+  
+  
 }
 
 export default NuevaVenta;
