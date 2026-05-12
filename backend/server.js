@@ -8,6 +8,9 @@ const saleDetailRoutes = require('./routes/saleDetail.routes.js');
 const userRoutes = require('./routes/users.routes.js')
 const authRoutes = require('./routes/auth.router.js');
 
+const PORT = process.env.PORT || 3000;
+
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -22,10 +25,13 @@ app.use('/api', authRoutes);
 
 // Ruta de prueba
 // app.get('/', (req, res) => {
-//   res.send('Servidor funcionando 🚀');
+//   res.send('Servidor funcionando ');
 // });
 
 // Puerto
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
 
 
 //Sincronizar tablas

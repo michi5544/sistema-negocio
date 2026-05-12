@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product.model');
 const authenticateToken = require('../middlewares/auth.middleware.js');
-const authorizeRole = require('../middlewares/authorizeRole.js');
+const authorizeRole = require('../middlewares/authorizeRole.js'); // paso 4 para autorizar solo a admin a entrar a api productos  
 
 // Crear producto
 router.post('/', async (req, res) => {    
@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Listar productos
+// Listar productos 
 router.get('/',
   //authenticateToken ,authorizeRole('admin') , quitar comentario despues de pruebas
 async (req, res) => { //authenticateToken protegiendo las rutas | authorizeRole: autoriza solo a admin a entrar a api productos

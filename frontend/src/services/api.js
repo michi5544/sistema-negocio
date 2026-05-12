@@ -48,6 +48,7 @@ export async function deleteClient(id) {
 }
 
 
+
 //          -------PRODUCTOS---------
 export async function getProducts() {
     const res = await fetch(`${API_URL}/products`);
@@ -99,7 +100,7 @@ export async function deleteProducts(id) {
 export async function getSales() {
     const res = await fetch(`${API_URL}/sales`);
     return res.json();
-}
+} 
 
 // obtener venta por ID
 export async function getSaleById(id) {
@@ -123,25 +124,19 @@ export async function addSale(sale) {
 }
 
 export async function deleteSale(id) {
-    await fetch(`${API_URL}/sales/${id}`, { method: "DELETE "});
+    await fetch(`${API_URL}/sales/${id}`, { method: "DELETE"});
 }
 
 
-//     -------- Ventas con detalles------- (varios productos por cada venta)
-// export async function getSales() {
-//     const res = await fetch(`${API_URL}/sales`);
-//     return res.json();
-// }
-
-// export async function addSale(sale) {
-//     const res = await fetch(`${API_URL}/sales`, {
-//         method: "POST",
-//         headers: {"Content-Type": "application/json"},
-//         body: JSON.stringify(sale),
-//     });
-//     return res.json();
-// }
-
-// export async function deleteSale(params) {
-    
-// }
+//     -------- Ventas con detalles------- 
+export async function updateSale(sale) {
+    const res = await fetch(`${API_URL}/sales/${sale.id}`, {
+        method: "PUT",
+        headers: { "Content-Type" : "application/json"},
+        body: JSON.stringify(sale),
+    });
+    if(!res.ok){
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+    }
+    return res.json();
+}

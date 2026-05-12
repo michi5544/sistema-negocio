@@ -121,6 +121,94 @@ router.get('/', async (req, res) => {
     }
 });
 
+//eliminar una venta y sus detalles
+router.delete('/:id', async (req, res) => {
+    try{
+        const {id} = req.params;
+
+        //Buscar venta
+        const sale = await Sale.findByPk(id, {
+            include: [
+                {
+                    model: SaleDetail,
+                    include: [{ model: Product, attributes: ['id', 'name', 'price'] }]
+
+                },
+                {
+                    model: Customers,
+                    attributes: ['id', 'name', 'email'] 
+                }
+            ]
+        });
+
+        if(!sale){
+            return res.status(404).json({ error: 'Venta no encontrada'});
+        }
+
+        //Eliminar detalles de venta
+        await SaleDetail.destroy({ where: { sale_id: id }});
+
+        //Eliminar venta
+        await Sale.destroy({ where: { id }});
+        res.json({ message: 'Venta eliminada correctamente'});
+    } catch(err){
+        res.status(500).json({ error: err.message });
+    }
+})
+
+// Actualizar una venta y sus detalles
+router.put('/:id', async (req, res) => {
+  const t = await sequelize.transaction(); // 👈 iniciamos transacción
+  try {
+    const { id } = req.params;
+    const { customer_id, user_id, products } = req.body;
+
+    // Buscar la venta
+    const sale = await Sale.findByPk(id, { transaction: t });
+    if (!sale) {
+      await t.rollback();
+      return res.status(404).json({ error: 'Venta no encontrada' });
+    }
+
+    // Actualizar datos de la venta
+    sale.customer_id = customer_id ?? sale.customer_id;
+    sale.user_id = user_id ?? sale.user_id;
+    sale.total = 0; // recalcularemos
+    await sale.save({ transaction: t });
+
+    // Eliminar detalles anteriores
+    await SaleDetail.destroy({ where: { sale_id: id }, transaction: t });
+    // Insertar nuevos detalles
+    let total = 0;
+    for (const p of products) {
+      const product = await Product.findByPk(p.productId, { transaction: t });
+      if (product) {
+        const subtotal = parseFloat(product.price) * p.quantity;
+        total += subtotal;
+
+        await SaleDetail.create({
+          sale_id: sale.id,
+          product_id: product.id,
+          quantity: p.quantity,
+          price: product.price
+        }, { transaction: t });
+      }
+    }
+
+    // Actualizar total
+    sale.total = total;
+    await sale.save({ transaction: t });
+
+    await t.commit(); // 👈 confirmamos cambios
+
+    res.json({ message: 'Venta actualizada correctamente', sale });
+  } catch (err) {
+    await t.rollback(); // 👈 revertimos si hay error
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 
 module.exports = router;
