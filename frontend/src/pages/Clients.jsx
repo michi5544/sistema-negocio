@@ -62,17 +62,13 @@ function Clients(){
     };
 
     return(
-        <div className="ml-64 p-6"> {/* margen izquierdo para el navbar */}
-
-        <section className="bg-white shadow rounded p-4">
+        <section>
             {/* Título arriba */}
             <h2 className="text-2xl font-bold text-center">
                 CLIENTES
             </h2>
 
-
-        <div className="flex justify-center mt-17">
-            <table className="w-8/10 max-w-2xl border border-gray-300 rounded-lg shadow-md">
+            <table className="w-full max-w-4xl border border-gray-300 rounded-lg shadow-md">
                 <thead>
                     <tr className="bg-[#005187] text-white">
                         <th className="px-6 py-3 text-left text-sm font-semibold">ID</th>
@@ -119,9 +115,7 @@ function Clients(){
                     {successsMessage}
                 </div>
             )} */}
-        </div>
         </section>
-        </div>
     );
 }
 

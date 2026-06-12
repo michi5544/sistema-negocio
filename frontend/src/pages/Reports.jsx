@@ -26,8 +26,7 @@ function Reports(){
 
     
     return (
-      
-    <div className="p-6 space-y-6 ml-64"> {/* margen izquierdo para el navbar */}
+<section>
       <h1 className="text-2xl font-bold text-center">REPORTES</h1>
 
       {/* Cards resumen */}
@@ -70,7 +69,7 @@ function Reports(){
           </tbody>
         </table>
       </div>
-    </div>
+</section>
   );
 
 }

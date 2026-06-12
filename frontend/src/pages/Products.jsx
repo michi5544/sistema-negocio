@@ -43,9 +43,7 @@ function Products(){
 };
 
     return(
-         <div className="ml-64 p-6"> {/* margen izquierdo para el navbar */}
-
-         <section className="bg-white shadow rounded p-4">
+         <section>
             {/* Título arriba */}
             <h2 className="text-2xl font-bold text-center">
                 PRODUCTOS
@@ -94,7 +92,6 @@ function Products(){
             </table>
         </div>
                 </section>
-        </div>
     );
 }
 

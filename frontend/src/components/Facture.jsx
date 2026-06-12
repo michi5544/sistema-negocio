@@ -7,7 +7,7 @@ import autoTable from "jspdf-autotable";
 export default function FactureModal({ sale, show, onClose }) {
     
  
-    if (!show || !sale) return null;
+    if (!show || !sale || !sale.SaleDetails) return null;
 
   const handleDownload = () => {
     const doc = new jsPDF();
@@ -47,7 +47,7 @@ export default function FactureModal({ sale, show, onClose }) {
             </tr>
           </thead>
           <tbody>
-            {sale.SaleDetails.map(det => (
+            {sale.SaleDetails.map((det) => (
               <tr key={det.id}>
                 <td className="p-2">{det.Product?.name}</td>
                 <td className="p-2">{det.quantity}</td>
