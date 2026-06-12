@@ -7,6 +7,8 @@ const saleRoutes = require('./routes/sale.routes.js');
 const saleDetailRoutes = require('./routes/saleDetail.routes.js');
 const userRoutes = require('./routes/users.routes.js')
 const authRoutes = require('./routes/auth.router.js');
+const MesaRoutes = require('./routes/mesa.router.js');
+const AmbienteRoutes = require('./routes/ambiente.router.js');
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,6 +24,8 @@ app.use('/api/sales', saleRoutes);
 app.use('/api/sale-details', saleDetailRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api', authRoutes);
+app.use('/api/mesa', MesaRoutes);
+app.use('/api/ambiente', AmbienteRoutes);
 
 // Ruta de prueba
 // app.get('/', (req, res) => {

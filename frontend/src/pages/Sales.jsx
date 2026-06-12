@@ -145,8 +145,7 @@ const fetchSales = async () => {
 
 
     return(
-        <div className="ml-64 p-6"> {/* margen izquierdo para el navbar */}
-    <section className="bg-white shadow rounded p-4">
+    <section>
     {/* Título arriba */}
     <h2 className="text-2xl font-bold text-center">
        DETALLE DE VENTAS
@@ -209,11 +208,7 @@ const fetchSales = async () => {
 
     </div>
     </section>
-        
-
-    </div>);
-
-}
+);}
 
 
 export default Sales;

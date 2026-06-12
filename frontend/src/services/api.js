@@ -1,6 +1,48 @@
 //  FUNCIONES PARA CONSUMIR EL BACKEND
 const API_URL = import.meta.env.VITE_API_URL;
 
+//         -------LOGIN---------
+export async function login(email,password) {
+    const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+    }
+    return res.json();
+}
+
+//         -------USUARIOS---------
+//  Obtener todos los usuarios
+export async function getUsers() {
+    const res = await fetch(`${API_URL}/users`);
+    return res.json();
+}
+
+// Obtener usuario por ID
+export async function getUserById(id) {
+    const res = await fetch(`${API_URL}/users/${id}`,{
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+    });
+    if (!res.ok){
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+    }
+    return res.json();
+}
+
+// Crear usuario
+export async function addUser(user) {
+    const res = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+    });
+    return res.json();
+}
+
 //  Obtener todos los clientes
 export async function getClients() {
     const res = await fetch(`${API_URL}/customers`);
@@ -138,5 +180,54 @@ export async function updateSale(sale) {
     if(!res.ok){
         throw new Error(`Error ${res.status}: ${res.statusText}`);
     }
+    return res.json();
+}
+//     -------- MESAS ------- 
+export async function getMesa() {
+    const res = await fetch(`${API_URL}/mesa`);
+    return res.json();
+}
+
+// Obtener mesa por ID
+export async function getMesaById(id) {
+    const res = await fetch(`${API_URL}/mesa/${id}`,{
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+    });
+    if (!res.ok){
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+    }
+    return res.json();
+}
+export async function addMesa(mesa) {
+    const res = await fetch(`${API_URL}/mesa`, {
+        method: "POST",
+        headers: { "Content-Type" : "application/json"},
+        body: JSON.stringify(mesa),
+    });
+    return res.json();
+}
+
+export async function deleteMesa(id) {
+    await fetch(`${API_URL}/mesa/${id}`, { method: "DELETE"});
+}
+
+//     -------- AMBIENTE ------- 
+
+export async function getAmbiente() {
+    const res = await fetch(`${API_URL}/ambiente`);
+    return res.json();
+}
+
+export async function deleteAmbiente(id) {
+    await fetch(`${API_URL}/ambiente/${id}`, { method: "DELETE"});
+}
+
+export async function addAmbiente(ambiente) {
+    const res = await fetch(`${API_URL}/ambiente`, {
+        method: "POST",
+        headers: { "Content-Type" : "application/json"},
+        body: JSON.stringify(ambiente),
+    });
     return res.json();
 }

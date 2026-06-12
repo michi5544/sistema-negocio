@@ -116,6 +116,7 @@ useEffect(() => {
       const data = await addSale(sale);
       setSaleId(data.sale.id);
       setSaleGuardada(data.sale);
+      setSale(data.sale);
       toast.success("Venta registrada exitosamente ✅");
       setShowConfirm(true);
     } catch (error) {
@@ -246,18 +247,19 @@ useEffect(() => {
         <div className="space-y-4 text-center">
           <p className="text-lg font-bold text-gray-700">¿Desea generar factura?</p>
           <div className="flex justify-center gap-4">
-            <button
-              onClick={() => handleShowInvoice(saleGuardada.id)}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-              Sí
-            </button>
+<button
+  onClick={() => setShowModal(true)} // 👈 abre directamente el modal
+  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+>
+  Sí
+</button>
 
-            <FactureModal 
+<FactureModal 
   sale={saleGuardada} 
-  show={showModal} 
+  show={showModal} // solo booleano
   onClose={() => setShowModal(false)} 
 />
+
 
             <button
               onClick={() => navigate("/sales")}
