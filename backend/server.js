@@ -28,9 +28,9 @@ app.use('/api/mesa', MesaRoutes);
 app.use('/api/ambiente', AmbienteRoutes);
 
 // Ruta de prueba
-// app.get('/', (req, res) => {
-//   res.send('Servidor funcionando ');
-// });
+ app.get('/', (req, res) => {
+   res.send('Servidor funcionando ');
+});
 
 // Puerto
 app.listen(PORT, () => {
@@ -40,6 +40,14 @@ app.listen(PORT, () => {
 
 //Sincronizar tablas
 sequelize.sync({ force: false })
-  .then(() => console.log('Tablas sincronizadas'))
-  .catch(err => console.error(err));
-
+  .then(() => {
+    console.log('Tablas sincronizadas');
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en el puerto ${PORT}`);
+      console.log('SERVER_READY');
+    });
+  })
+  .catch(err => {
+    console.error('Error al sincronizar tablas:', err);
+    process.exit(1);
+  });
