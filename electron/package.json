@@ -1,0 +1,32 @@
+{
+  "name": "electron",
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build:frontend": "cd ../frontend && npm run build",
+    "dist": "yarn build:frontend && electron-builder"
+  },
+  "build": {
+    "appId": "com.miempresa.miproyecto",
+    "productName": "MiProyecto",
+    "directories": {
+      "output": "../release"
+    },
+    "files": [
+      "main.js"
+    ],
+    "extraResources": [
+      {
+        "from": "../frontend/dist",
+        "to": "frontend"
+      }
+    ],
+    "afterPack": "./afterPack.js"
+  },
+  "devDependencies": {
+    "electron": "^42.4.0",
+    "electron-builder": "^26.15.3"
+  }
+}
