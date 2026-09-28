@@ -32,6 +32,17 @@ El objetivo es ofrecer una interfaz moderna y responsiva para la gestión de cli
 Copia el archivo .env.example y renómbralo a .env.
 Ajusta la URL de la API según tu entorno: VITE_API_URL=http://mihost:miruta/api
 
+4. Inicia el backend (crea la base de datos, las tablas y un usuario admin
+   por defecto si la tabla de usuarios está vacía):
+   ```bash
+   npm run dev
+   ```
+   Credenciales del usuario admin generado automáticamente:
+   - Email: `admin@sistema.com`
+   - Password: `admin123`
+
+   -NOTA: Cambia esta contraseña después del primer inicio de sesión.
+
 *** DESARROLLO
     npm run dev -correr el proyecto
 

@@ -1,5 +1,8 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const path = require('path');
+
+// Usa path explícito para que funcione tanto en dev como en el ejecutable empaquetado
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const sequelize = new Sequelize( //CONFIGURANDDO LA CONEXION
   process.env.DB_NAME,

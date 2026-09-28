@@ -1,123 +1,123 @@
-//  PAGINA CRUD DE CLIENTES
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {getClients, addClient, updateClient, deleteClient} from "../services/api.js";
-import FrmNuevoCliente from "./FrmNuevoCliente.jsx";
-import NuevoCliente from "./FrmNuevoCliente.jsx";
+import { getClients, deleteClient } from "../services/api.js";
+import { useAuth } from "../context/AuthContext";
+import Pagination from "../components/Pagination";
 
-function Clients(){
-    const API_URL = import.meta.env.VITE_API_URL;
-    const navigate = useNavigate();
-    const [clients, setClients] = useState([]);
-    const [name, setName] = useState("");
-    const [editingClient, setEditingClient] = useState(null);
-    const [successsMessage, setsuccesssMessage] = useState("");
+const PAGE_SIZE = 10;
 
-    const handleEdit = (id) => {
-        navigate(`/clientes/editar/${id}`); //redirige al formulario con el id
+function Clients() {
+  const navigate = useNavigate();
+  const { isAdmin } = useAuth();
+  const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    getClients()
+      .then((data) => setClients(Array.isArray(data) ? data : (data?.customers ?? [])))
+      .catch(() => toast.error("Error al cargar clientes"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Eliminar este cliente?")) return;
+    try {
+      await deleteClient(id);
+      setClients((prev) => prev.filter((c) => c.id !== id));
+      toast.success("Cliente eliminado");
+    } catch {
+      toast.error("Error al eliminar el cliente");
     }
+  };
 
-    //Cargar clientes al inicio
-    useEffect(() => {
-        fetch(`${API_URL}/customers`)
-        .then(res => res.json())
-        .then(data => {
-            console.log("clientes", data);
-            setClients(data.customers || data);
-        })
-        .catch(err => console.error(err));
-    }, []);
+  const totalPages = Math.ceil(clients.length / PAGE_SIZE);
+  const paginated = clients.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-    //Editar cliente
-    // const handleEdit = (client) => {
-    //     setEditingId(client); //pasa cliente al form
-    // };
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">CLIENTES</h2>
+        {isAdmin && (
+          <button
+            onClick={() => navigate("/clientes/nuevo")}
+            className="bg-[#005187] text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-900 transition"
+          >
+            + Nuevo Cliente
+          </button>
+        )}
+      </div>
 
-    // Crear o actualizar cliente
-     const handleSaved = (savedClient) => {
-
-         if(editingClient){
-            //actualizacion
-             setClients(clients.map(c => c.id === savedClient.id ? savedClient : c));
-             setEditingClient(null);
-         }else{
-            //nuevo
-             setClients(([...clients, savedClient]));
-         }
-     };
-
-
-
-    // Eliminar cliente
-    const handleDelete = async (id) => {
-        try {
-        await deleteClient(id); //llamada al backend
-        setClients(clients.filter(c => c.id !== id)); // actualiza estado
-        toast.info("Cliente eliminado con éxito ✅")
-        setTimeout(() => setsuccesssMessage(""), 3000); // borra mensajeen 3s
-        }catch(error){
-            toast.error("A ocurrido un error al eliminar el cliente!", error)
-        }
-    };
-
-    return(
-        <section>
-            {/* Título arriba */}
-            <h2 className="text-2xl font-bold text-center">
-                CLIENTES
-            </h2>
-
-            <table className="w-full max-w-4xl border border-gray-300 rounded-lg shadow-md">
-                <thead>
-                    <tr className="bg-[#005187] text-white">
-                        <th className="px-6 py-3 text-left text-sm font-semibold">ID</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold">Nombre</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold">Email</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold">Telefono</th>
-                        <th className="px-6 py-3 text-left text-sm font-semibold">Dirección</th>
-                        <th className="px-8 py-5 text-left text-sm font-semibold">Fecha creado</th>
-                        <th className="w-48 px-6 py-3 text-center text-sm font-semibold">Acciones</th>
+      {loading ? (
+        <p className="text-gray-500">Cargando...</p>
+      ) : (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr className="bg-[#005187] text-white">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nombre</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Teléfono</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Dirección</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Fecha registro</th>
+                  {isAdmin && (
+                    <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">Acciones</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {paginated.length === 0 ? (
+                  <tr>
+                    <td colSpan={isAdmin ? 7 : 6} className="px-4 py-8 text-center text-gray-400">
+                      No hay clientes registrados.
+                    </td>
+                  </tr>
+                ) : (
+                  paginated.map((c) => (
+                    <tr key={c.id} className="hover:bg-[#EEF4FA] transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-500">{c.id}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{c.name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{c.email}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{c.phone}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{c.address}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500">{c.created_at}</td>
+                      {isAdmin && (
+                        <td className="px-4 py-3 text-center whitespace-nowrap">
+                          <button
+                            onClick={() => navigate(`/clientes/editar/${c.id}`)}
+                            className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => handleDelete(c.id)}
+                            className="ml-2 px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded hover:bg-red-700 transition"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      )}
                     </tr>
-                </thead>
-                <tbody className="bg-white">
-                    {clients.map((p,index) =>(
-                        <tr
-                        key={p.id}
-                        className={`bg-[#F1F5F9] hover:bg-[#CAD5E2] transition-colors`}
-                        >
-                            <td className="px-6 py-4 text-sm text-gray-700">{p.id}</td>
-                            <td className="px-6 py-4 text-sm font-medium text-gray-900">{p.name}</td>
-                            <td className="px-6 py-4 text-sm font-medium text-gray-900">{p.email}</td>
-                            <td className="px-6 py-4 text-sm text-gray-700">{p.phone}</td>
-                            <td className="px-6 py-4 text-sm text-gray-700">{p.address}</td>
-                            <td className="px-6 py-4 text-sm text-gray-700">{p.created_at}</td>
-                             <td className="w-48 px-6 py-4 text-center">
-                                <button
-                                onClick={() => handleEdit(p.id)} 
-                                className="px-7 py-3 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 transition">
-                                    Editar
-                                </button>
-                                <button 
-                                onClick={() => handleDelete(p.id)}
-                                className="px-7 py-3 ml-3 text-sm font-semibold text-white bg-red-600 rounded hover:bg-red-700 transition">
-                                    Eliminar
-                                </button>
-
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
+                  ))
+                )}
+              </tbody>
             </table>
-
-            {/* {successsMessage && (
-                <div className="mt-4 p-3 bg-green-100 text-green-800 rounded">
-                    {successsMessage}
-                </div>
-            )} */}
-        </section>
-    );
+          </div>
+          <div className="border-t px-4">
+            <div className="flex items-center justify-between py-2">
+              <p className="text-xs text-gray-500">
+                {clients.length} {clients.length === 1 ? "cliente" : "clientes"} en total
+              </p>
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
 }
-
 
 export default Clients;

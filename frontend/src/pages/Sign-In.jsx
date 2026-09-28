@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import Logo from "../Logosistema.png";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
@@ -19,12 +21,8 @@ export default function SignIn() {
     try {
       const data = await login(emailInput, passwordInput);
 
-      // Guardar token / usuario si tu backend lo retorna
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
+      if (data.token && data.user) {
+        authLogin(data.user, data.token);
       }
 
       toast.success("Inicio de sesión exitoso");
@@ -33,13 +31,10 @@ export default function SignIn() {
       }, 1000);
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
-
-      // Mensaje según la respuesta del backend
       const mensaje =
         error.response?.data?.message ||
         error.message ||
         "Error al iniciar sesión";
-
       toast.error("" + mensaje);
     } finally {
       setLoading(false);
@@ -82,11 +77,6 @@ export default function SignIn() {
               <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
                 Contraseña
               </label>
-              <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                  ¿Olvidaste tu contraseña?
-                </a>
-              </div>
             </div>
             <div className="mt-2">
               <input
@@ -112,7 +102,7 @@ export default function SignIn() {
         </form>
 
         <p className="mt-10 text-center text-sm/6 text-gray-500">
-          Sistema de ventas{" "}
+          Sistema de ventas
         </p>
       </div>
     </div>

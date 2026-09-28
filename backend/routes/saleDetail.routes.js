@@ -3,9 +3,11 @@ const router = express.Router();
 const SaleDetail = require('../models/sale_details.model.js');
 const Product = require('../models/product.model.js');
 const Sale = require('../models/sale.model.js');
+const authenticateToken = require('../middlewares/auth.middleware.js');
+const authorizeRole = require('../middlewares/authorizeRole.js');
 
-//CREAR DETALLE DE VENTA
-router.post('/', async (req , res) => {
+// Crear detalle de venta — admin y employee
+router.post('/', authenticateToken, authorizeRole('admin', 'employee'), async (req , res) => {
     try{
         const { saleId, productId, quantity, price } = req.body;
         const detail = await SaleDetail.create({ saleId, productId, quantity, price });
@@ -15,8 +17,8 @@ router.post('/', async (req , res) => {
     }
 });
 
-//LISTAR DETALLES
-router.get('/', async (req, res) => {
+// Listar detalles — admin y employee
+router.get('/', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
     try{
         const details = await SaleDetail.findAll({
             include: [Sale, Product]
@@ -27,8 +29,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-//ACTUALIZAR DETALLE
-router.put('/:id', async (req, res) => {
+// Actualizar detalle — admin y employee
+router.put('/:id', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
     try{
         const {id} = req.params;
         await SaleDetail.update(req.body, {where: { id }});
@@ -36,10 +38,10 @@ router.put('/:id', async (req, res) => {
     }catch(err){
         res.status(500).json({ error: err.message });
     }
-})
+});
 
-//ELIMINAR DETALLE
-router.delete('/:id', async (req, res) => {
+// Eliminar detalle — admin y employee
+router.delete('/:id', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
     try{
         const { id } = req.params;
         await SaleDetail.destroy({ where: {id} });
