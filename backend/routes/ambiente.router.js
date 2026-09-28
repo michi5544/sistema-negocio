@@ -1,24 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const sequelize = require('../config/db.js');
 const Ambiente = require('../models/ambiente.model.js');
-const { json } = require('sequelize');
+const authenticateToken = require('../middlewares/auth.middleware.js');
+const authorizeRole = require('../middlewares/authorizeRole.js');
 
-//OBTENER TODOS LOS AMBIENTES
-router.get('/', async (req, res) => {
+// Obtener todos los ambientes — admin y employee
+router.get('/', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
     try{
         const ambientes = await Ambiente.findAll({
-                    attributes: ['id_ambiente','codigo' ,'nombre', 'descripcion']
-        });  
+            attributes: ['id_ambiente', 'codigo', 'nombre', 'descripcion']
+        });
         res.json(ambientes);
     }catch(err){
         res.status(500).json({ error: err.message });
     }
 });
 
-router.post('/', async (req, res) => {
+// Crear ambiente — solo admin
+router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try{
-        const {codigo,nombre, descripcion} = req.body;
+        const {codigo, nombre, descripcion} = req.body;
         const nuevoAmbiente = await Ambiente.create({
             codigo,
             nombre,
@@ -30,7 +31,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => { 
+// Eliminar ambiente — solo admin
+router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try{
         const {id} = req.params;
         const ambiente = await Ambiente.findByPk(id);

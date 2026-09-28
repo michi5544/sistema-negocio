@@ -1,5 +1,6 @@
-const jwt = require('jsonwebtoken'); // algoritmo de encriptacion para verificar el token payload 
-require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 function authenticateToken(req, res, next){
     const authHeader = req.headers['authorization'];

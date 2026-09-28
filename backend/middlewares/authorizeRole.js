@@ -1,8 +1,9 @@
 // Middleware para validar token, verifique el rol del usuario
+// Acepta uno o varios roles: authorizeRole('admin') o authorizeRole('admin', 'employee')
 
-function authorizeRole(role){
+function authorizeRole(...roles){
     return (req, res, next) => {
-        if(req.user.role !== role){   
+        if(!roles.includes(req.user.role)){
             return res.status(403).json({ error: 'Acceso denegado: no tienes permisos suficientes'});
         }
         next();

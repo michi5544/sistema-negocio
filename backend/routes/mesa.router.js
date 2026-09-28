@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const sequelize = require('../config/db.js');
 const Mesa = require('../models/mesa.model.js');
 const Users = require('../models/users.model.js');
-const { json } = require('sequelize');
+const authenticateToken = require('../middlewares/auth.middleware.js');
+const authorizeRole = require('../middlewares/authorizeRole.js');
 
-//OBTENER TODAS LAS MESAS
-router.get('/', async (req, res) => {
+// Obtener todas las mesas — admin y employee
+router.get('/', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
     try{
         const mesas = await Mesa.findAll({
             attributes: ['id_mesa', 'numero_mesa', 'cantidad_personas', 'estado', 'comentarios', 'tiempo_ocupada', 'id_usuario', 'id_ambiente'],
             include: [
-                {model: Users,
-                attributes: ['id', 'name', 'email', 'role']}
+                { model: Users, attributes: ['id', 'name', 'email', 'role'] }
             ]
         });
         res.json(mesas);
@@ -21,15 +20,14 @@ router.get('/', async (req, res) => {
     }
 });
 
-//OBTENER UNA MESA POR ID
-router.get('/:id', async (req, res) => {
+// Obtener una mesa por ID — admin y employee
+router.get('/:id', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
     try{
         const {id} = req.params;
         const mesa = await Mesa.findByPk(id, {
             attributes: ['id_mesa', 'numero_mesa', 'cantidad_personas', 'estado', 'comentarios', 'tiempo_ocupada', 'id_usuario', 'id_ambiente'],
             include: [
-                {model: Users,
-                attributes: ['id', 'name', 'email', 'role',]}
+                { model: Users, attributes: ['id', 'name', 'email', 'role'] }
             ]
         });
         if(mesa){
@@ -42,8 +40,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-//CREAR UNA NUEVA MESA
-router.post('/', async (req, res) => {
+// Crear una nueva mesa — solo admin
+router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try{
         const {numero_mesa, cantidad_personas, estado, comentarios, tiempo_ocupada, id_usuario, id_ambiente} = req.body;
         const nuevaMesa = await Mesa.create({
@@ -61,8 +59,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-//ACTUALIZAR UNA NUEVA MESA
-router.put('/:id', async (req, res) => {
+// Actualizar una mesa — admin y employee
+router.put('/:id', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
     try{
         const {id} = req.params;
         const {numero_mesa, cantidad_personas, estado, comentarios, tiempo_ocupada, id_usuario, id_ambiente} = req.body;
@@ -86,9 +84,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-
-//ELIMINAR UNA NUEVA MESA
-router.delete('/:id', async (req, res) => {
+// Eliminar una mesa — solo admin
+router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try{
         const {id} = req.params;
         const mesa = await Mesa.findByPk(id);
@@ -102,6 +99,5 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
 
 module.exports = router;

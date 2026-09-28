@@ -3,17 +3,19 @@ const sequelize = require('../config/db');
 const Customer = require('./customers.model.js');
 
 const Sale = sequelize.define('Sale', {
-    id: { 
-    type: DataTypes.INTEGER, 
-    autoIncrement: true, 
-    primaryKey: true 
+    id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
   },
-  total: { 
-    type: DataTypes.DECIMAL(10,2), 
-    allowNull: false 
+  total: {
+    type: DataTypes.DECIMAL(10,2),
+    allowNull: false
   },
-  customer_id: { type: DataTypes.INTEGER, allowNull: false }, // llave Fk
-  user_id: { type: DataTypes.INTEGER, allowNull: false }
+  customer_id: { type: DataTypes.INTEGER, allowNull: false },
+  user_id: { type: DataTypes.INTEGER, allowNull: false },
+  id_mesa: { type: DataTypes.INTEGER, allowNull: true },
+  sale_date: { type: DataTypes.DATE, allowNull: true }
 
 }, {
     tableName: 'sales',

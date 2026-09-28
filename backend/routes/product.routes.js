@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/product.model');
 const authenticateToken = require('../middlewares/auth.middleware.js');
-const authorizeRole = require('../middlewares/authorizeRole.js'); // paso 4 para autorizar solo a admin a entrar a api productos  
+const authorizeRole = require('../middlewares/authorizeRole.js');
 
-// Crear producto
-router.post('/', async (req, res) => {    
+// Crear producto — solo admin
+router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
   try {
     const product = await Product.create(req.body);
     res.json(product);
@@ -14,10 +14,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Listar productos 
-router.get('/',
-  //authenticateToken ,authorizeRole('admin') , quitar comentario despues de pruebas
-async (req, res) => { //authenticateToken protegiendo las rutas | authorizeRole: autoriza solo a admin a entrar a api productos
+// Listar productos — admin y employee
+router.get('/', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
   try {
     const products = await Product.findAll();
     res.json(products);
@@ -26,8 +24,8 @@ async (req, res) => { //authenticateToken protegiendo las rutas | authorizeRole:
   }
 });
 
-// Obtener producto por ID
-router.get('/:id', async (req, res) => {
+// Obtener producto por ID — admin y employee
+router.get('/:id', authenticateToken, authorizeRole('admin', 'employee'), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -37,48 +35,27 @@ router.get('/:id', async (req, res) => {
 
     if (!product) {
        return res.status(404).json({ error: 'Producto no encontrado' });
-    } else {
-      res.json(product);
     }
+
+    res.json(product);
   } catch (err) {
     res.status(500).json({ error: 'Producto no encontrado' });
   }
 });
 
-// Obtener producto por otro campo
-router.get('/:id', async (req, res) => {
-     try {
-       const { id } = req.params;
-
-       const product = await Product.findOne({
-         where: { id },
-         attributes: ['id', 'name', 'description', 'price', 'stock']
-       });
-
-       if (!product) {
-         return res.status(404).json({ error: 'Producto no encontrado' });
-       } else {
-         res.json(product);
-       }
-     } catch (err) {
-       res.status(500).json({ error: 'Producto no encontrado' });
-     }
-   });
-
-// Actualizar producto
-router.put('/:id', async (req, res) => {
+// Actualizar producto — solo admin
+router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
   try {
     const { id } = req.params;
 
-    const [update] = await Product.update(req.body, { 
-      where: { id } 
+    const [update] = await Product.update(req.body, {
+      where: { id }
     });
 
     if (update === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
-    // obtener el producto actualizado para devolverlo
     const updatedProduct = await Product.findByPk(id, {
       attributes: ['id', 'name', 'description', 'price', 'stock']
     });
@@ -89,19 +66,19 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Eliminar producto
-router.delete('/:id', async (req, res) => {
+// Eliminar producto — solo admin
+router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleted = await Product.destroy({ 
-      where: { id } 
+    const deleted = await Product.destroy({
+      where: { id }
     });
 
     if (deleted === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
-    
+
     res.json({ message: 'Producto eliminado' });
   } catch (err) {
     res.status(500).json({ error: err.message });

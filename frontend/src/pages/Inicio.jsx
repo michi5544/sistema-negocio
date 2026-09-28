@@ -1,79 +1,69 @@
-{/* PROYECTO DE REACT js +  TailwindCSS*/}
-import { UserGroupIcon } from '@heroicons/react/24/solid'
 import { useNavigate } from "react-router-dom";
-import { Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
-import NuevoCliente from './pages/FrmNuevoCliente';
-import Navbar from './components/Navbar';
- 
+import { UserGroupIcon } from "@heroicons/react/24/solid";
+import { useAuth } from "../context/AuthContext";
 
 function Inicio() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { isAdmin } = useAuth();
+
+  const Card = ({ color, title, description, children }) => (
+    <div className={`bg-white shadow rounded-lg p-5 hover:shadow-lg transition border-l-4 ${color}`}>
+      <h2 className={`text-lg font-bold mb-1`}>{title}</h2>
+      <p className="text-gray-500 text-sm mb-4">{description}</p>
+      <div className="flex flex-wrap gap-2">{children}</div>
+    </div>
+  );
+
+  const Btn = ({ onClick, variant = "primary", children }) => {
+    const styles = {
+      primary: "bg-[#005187] text-white hover:bg-blue-900",
+      secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+    };
+    return (
+      <button
+        onClick={onClick}
+        className={`px-4 py-2 rounded text-sm font-medium transition ${styles[variant]}`}
+      >
+        {children}
+      </button>
+    );
+  };
 
   return (
-    <div>
-      {/* Contenido principal */}
-        <div className="flex-1 min-h-screen flex flex-col bg-gray-100">
-          <section className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Clientes */}
-            <div className="bg-white shadow rounded p-4 hover:shadow-lg transition">
-              <h2 className="flex items-center text-xl font-semibold mb-2 text-green-600">
-                <span className="bg-green-100 p-2 rounded-full mr-2">
-                  <UserGroupIcon className="w-6 h-6 text-green-600" />
-                </span>
-                Clientes
-              </h2>
-              <p className="text-gray-700">Gestión de clientes registrados en el sistema.</p>
-              <button
-                onClick={() => navigate("/clientes/nuevo")}
-                className="mt-3 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-              >
-                Nuevo Cliente
-              </button>
-            </div>
+    <div className="flex-1 min-h-screen flex flex-col bg-gray-100">
+      <section className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-5 p-2">
+        {/* Clientes */}
+        <Card color="border-green-500" title="Clientes" description="Gestión de clientes registrados en el sistema.">
+          <Btn onClick={() => navigate("/clients")}>Ver Clientes</Btn>
+          {isAdmin && (
+            <Btn onClick={() => navigate("/clientes/nuevo")} variant="secondary">+ Nuevo Cliente</Btn>
+          )}
+        </Card>
 
-            {/* Productos */}
-            <div className="bg-white rounded shadow p-4 hover:shadow-lg transition">
-              <h2 className="text-xl font-semibold mb-2 text-blue-600">Productos</h2>
-              <p className="text-gray-700">Inventario y control de productos disponibles.</p>
-              <button
-                onClick={() => navigate("/productos/nuevo")}
-                className="mt-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                Nuevo Producto
-              </button>
-            </div>
+        {/* Productos */}
+        <Card color="border-blue-500" title="Productos" description="Inventario y control de productos disponibles.">
+          <Btn onClick={() => navigate("/products")}>Ver Productos</Btn>
+          {isAdmin && (
+            <Btn onClick={() => navigate("/productos/nuevo")} variant="secondary">+ Nuevo Producto</Btn>
+          )}
+        </Card>
 
-            {/* Ventas */}
-            <div className="bg-white rounded shadow p-4 hover:shadow-lg transition">
-              <h2 className="text-xl font-semibold mb-2 text-purple-600">Ventas</h2>
-              <p className="text-gray-700">Registro y detalle de ventas realizadas.</p>
-              <button
-                onClick={() => navigate("/ventas/nueva")}
-                className="mt-3 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-              >
-                Nueva Venta
-              </button>
-            </div>
+        {/* Ventas */}
+        <Card color="border-purple-500" title="Ventas" description="Registro y detalle de ventas realizadas.">
+          <Btn onClick={() => navigate("/sales")}>Ver Ventas</Btn>
+        </Card>
 
-            {/* Reportes */}
-            <div className="bg-white rounded shadow p-4 hover:shadow-lg transition">
-              <h2 className="text-xl font-semibold mb-2 text-red-600">Reportes</h2>
-              <p className="text-gray-700">Visualización de reportes y estadísticas.</p>
-              <button
-                onClick={() => navigate("/reports")}
-                className="mt-3 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              >
-                Generar Reporte
-              </button>
-            </div>
-          </section>
+        {/* Reportes — solo admin */}
+        {isAdmin && (
+          <Card color="border-red-500" title="Reportes" description="Visualización de reportes y estadísticas.">
+            <Btn onClick={() => navigate("/reports")}>Ver Reportes</Btn>
+          </Card>
+        )}
+      </section>
 
-          {/* Footer */}
-          <footer className="bg-gray-800 text-white p-4 text-center">
-            <p>© 2025 Sistema de Ventas - Michelle</p>
-          </footer>
-        </div>
+      <footer className="bg-gray-800 text-white p-4 text-center text-sm">
+        © 2025 Sistema de Ventas - Michelle
+      </footer>
     </div>
   );
 }

@@ -88,8 +88,8 @@ CREATE TABLE sale_details (
 CREATE TABLE Comanda (
     id_comanda INT AUTO_INCREMENT PRIMARY KEY,   -- Identificador único de la comanda
     id_mesa INT NOT NULL,                        -- FK hacia la tabla Mesa
-    estado ENUM('Pendiente', 'En preparacion', 'Listo', 'Entregado','Cancelado') NOT NULL,   -- Estado de la comanda
-
+ estado ENUM('Pendiente','En preparacion','Listo','Entregado','Cancelado','Cobrado') NOT NULL, -- Estado de la comanda
+fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     -- Definición de claves foráneas
     CONSTRAINT fk_comanda_mesa FOREIGN KEY (id_mesa) REFERENCES Mesa(id_mesa)
 );
@@ -106,4 +106,20 @@ CREATE TABLE DetalleComanda (
     -- Definición de claves foráneas
     CONSTRAINT fk_detalle_comanda FOREIGN KEY (id_comanda) REFERENCES Comanda(id_comanda),
     CONSTRAINT fk_detalle_producto FOREIGN KEY (id_producto) REFERENCES products(id)
+);
+
+-- 2. Tabla de caja (Sequelize la crea sola, pero por si acaso)
+CREATE TABLE IF NOT EXISTS caja (
+    id_caja INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario_apertura INT NOT NULL,
+    fecha_apertura TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    monto_inicial DECIMAL(10,2) NOT NULL,
+    id_usuario_cierre INT DEFAULT NULL,
+    fecha_cierre TIMESTAMP DEFAULT NULL,
+    monto_final DECIMAL(10,2) DEFAULT NULL,
+    total_ventas DECIMAL(10,2) DEFAULT NULL,
+    diferencia DECIMAL(10,2) DEFAULT NULL,
+    estado ENUM('Abierta','Cerrada') NOT NULL DEFAULT 'Abierta',
+    FOREIGN KEY (id_usuario_apertura) REFERENCES users(id),
+    FOREIGN KEY (id_usuario_cierre) REFERENCES users(id)
 );
